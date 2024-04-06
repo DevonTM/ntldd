@@ -6,6 +6,7 @@
 
 #define NTLDD_VERSION_MAJOR 0
 #define NTLDD_VERSION_MINOR 2
+#define NTLDD_VERSION_PATCH 1
 
 struct DepTreeElement;
 
