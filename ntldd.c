@@ -95,7 +95,7 @@ int PrintImageLinks (int first, int verbose, int unused, int datarelocs, int fun
 
   if (!unresolved && !first)
   {
-    if (stricmp (self->module, self->resolved_module) == 0)
+    if (_stricmp (self->module, self->resolved_module) == 0)
       printf (" (0x%p)\n", self->mapped_address);
     else
       printf (" => %s (0x%p)\n", self->resolved_module,
@@ -192,7 +192,7 @@ int main (int argc, char **argv)
           if (p)
             *p = '\0';
         }
-        sp.path[sp.count - 1] = strdup(add_dirs);
+        sp.path[sp.count - 1] = _strdup(add_dirs);
         add_dirs = sep + 1;
         if (!sep)
             break;
@@ -241,7 +241,7 @@ Try `ntldd --help' for more information\n", argv[i]);
       if (p++)
         *p = '\0';
 
-      sp.path[sp.count - files_count + i] = strdup(buff);
+      sp.path[sp.count - files_count + i] = _strdup(buff);
     }
     int multiple = files_start + 1 < argc;
     struct DepTreeElement root;
@@ -250,7 +250,7 @@ Try `ntldd --help' for more information\n", argv[i]);
     {
       struct DepTreeElement *child = (struct DepTreeElement *) malloc (sizeof (struct DepTreeElement));
       memset (child, 0, sizeof (struct DepTreeElement));
-      child->module = strdup (argv[i]);
+      child->module = _strdup (argv[i]);
       AddDep (&root, child);
       char **stack = NULL;
       uint64_t stack_len = 0;

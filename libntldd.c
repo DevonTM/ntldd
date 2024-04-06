@@ -130,7 +130,7 @@ int FindDep (struct DepTreeElement *root, char *name, struct DepTreeElement **re
   root->flags |= DEPTREE_VISITED;
   for (i = 0; i < root->childs_len; i++)
   {
-    if (stricmp (root->childs[i]->module, name) == 0)
+    if (_stricmp (root->childs[i]->module, name) == 0)
     {
       if (result != NULL)
         *result = root->childs[i];
@@ -156,14 +156,14 @@ struct DepTreeElement *ProcessDep (BuildTreeConfig* cfg, soff_entry *soffs, int 
   char *dllname = (char *) MapPointer (soffs, soffs_len, name, NULL);
   if (dllname == NULL)
     return NULL;
-  if (strlen (dllname) > 10 && strnicmp ("api-ms-win", dllname, 10) == 0)
+  if (strlen (dllname) > 10 && _strnicmp ("api-ms-win", dllname, 10) == 0)
   {
     /* TODO: find a better way to identify api stubs. Versioninfo, maybe? */
     return NULL;
   }
   for (i = (int64_t)*cfg->stack_len - 1; i >= 0; i--)
   {
-    if ((*cfg->stack)[i] && stricmp ((*cfg->stack)[i], dllname) == 0)
+    if ((*cfg->stack)[i] && _stricmp ((*cfg->stack)[i], dllname) == 0)
       return NULL;
     if (i == 0)
       break;
@@ -175,7 +175,7 @@ struct DepTreeElement *ProcessDep (BuildTreeConfig* cfg, soff_entry *soffs, int 
     memset (child, 0, sizeof (struct DepTreeElement));
     if (deep == 0)
     {
-      child->module = strdup (dllname);
+      child->module = _strdup (dllname);
       AddDep (self, child);
     }
   }
@@ -209,7 +209,7 @@ void PushStack (char ***stack, uint64_t *stack_len, uint64_t *stack_size, char *
   {
     ResizeStack (stack, stack_size);
   }
-  (*stack)[*stack_len] = strdup (name);
+  (*stack)[*stack_len] = _strdup (name);
   (*stack_len) += 1;
 }
 
@@ -256,7 +256,7 @@ static void BuildDepTree32or64 (LOADED_IMAGE *img, BuildTreeConfig* cfg, struct 
       if (export_module != NULL)
       {
         if (self->export_module == NULL)
-          self->export_module = strdup (export_module);
+          self->export_module = _strdup (export_module);
       }
     }
     if (ied && ied->NumberOfFunctions > 0)
@@ -277,7 +277,7 @@ static void BuildDepTree32or64 (LOADED_IMAGE *img, BuildTreeConfig* cfg, struct 
         {
           char *s_name = (char *) MapPointer (soffs, soffs_len, names[i], NULL);
           if (s_name != NULL)
-            self->exports[ords[i]].name = strdup (s_name);
+            self->exports[ords[i]].name = _strdup (s_name);
         }
       }
       for (i = 0; i < ied->NumberOfFunctions; i++)
@@ -288,7 +288,7 @@ static void BuildDepTree32or64 (LOADED_IMAGE *img, BuildTreeConfig* cfg, struct 
           if ((idata->VirtualAddress <= addrs[i]) && (idata->VirtualAddress + idata->Size > addrs[i]))
           {
             self->exports[i].address = NULL;
-            self->exports[i].forward_str = strdup ((char *) MapPointer (soffs, soffs_len, addrs[i], NULL));
+            self->exports[i].forward_str = _strdup ((char *) MapPointer (soffs, soffs_len, addrs[i], NULL));
           }
           else
             self->exports[i].address = MapPointer (soffs, soffs_len, addrs[i], &section);
@@ -335,7 +335,7 @@ static void BuildDepTree32or64 (LOADED_IMAGE *img, BuildTreeConfig* cfg, struct 
           {
             IMAGE_IMPORT_BY_NAME *byname = (IMAGE_IMPORT_BY_NAME *) MapPointer (soffs, soffs_len, imp->orig_address, NULL);
             if (byname != NULL)
-              imp->name = strdup ((char *) byname->Name);
+              imp->name = _strdup ((char *) byname->Name);
           }
         }
       }
@@ -385,7 +385,7 @@ static void BuildDepTree32or64 (LOADED_IMAGE *img, BuildTreeConfig* cfg, struct 
           {
             IMAGE_IMPORT_BY_NAME *byname = (IMAGE_IMPORT_BY_NAME *) MapPointer (soffs, soffs_len, imp->orig_address, NULL);
             if (byname != NULL)
-              imp->name = strdup ((char *) byname->Name);
+              imp->name = _strdup ((char *) byname->Name);
           }
         }
       }
@@ -454,7 +454,7 @@ int BuildDepTree (BuildTreeConfig* cfg, char *name, struct DepTreeElement *root,
     if (GetModuleFileNameA (hmod, modpath, MAX_PATH) == 0)
       return 1;
     if (self->resolved_module == NULL)
-      self->resolved_module = strdup (modpath);
+      self->resolved_module = _strdup (modpath);
 
     dos = (IMAGE_DOS_HEADER *) hmod;
     loaded_image.FileHeader = (IMAGE_NT_HEADERS *) ((char *) hmod + dos->e_lfanew);
@@ -479,7 +479,7 @@ int BuildDepTree (BuildTreeConfig* cfg, char *name, struct DepTreeElement *root,
       return 1;
     }
     if (self->resolved_module == NULL)
-      self->resolved_module = strdup (loaded_image.ModuleName);
+      self->resolved_module = _strdup (loaded_image.ModuleName);
   }
   if (cfg->machineType == -1)
     cfg->machineType = (int)loaded_image.FileHeader->FileHeader.Machine;
