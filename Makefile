@@ -1,8 +1,7 @@
-
 CC=/usr/bin/x86_64-w64-mingw32-gcc
 AR=/usr/bin/x86_64-w64-mingw32-ar
 RM=rm
-CFLAGS= -fno-common -g -O3 -Wall -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x501
+CFLAGS= -fno-common -g -O3 -Wall -D__USE_MINGW_ANSI_STDIO=1 -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00
 LDFLAGS=$(CFLAGS) -L. -lntldd -limagehlp
 
 all: ntldd.exe
