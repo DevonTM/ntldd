@@ -234,7 +234,7 @@ Try `ntldd --help' for more information\n", argv[i]);
     for (i = 0; i < files_count; ++i)
     {
       char buff[MAX_PATH] = {};
-      strcpy(buff, argv[files_start+i]);
+      strcpy_s(buff, sizeof(buff), argv[files_start+i]);
       char* p = strrchr(buff, '\\');
       if (!p)
         p = strrchr(buff, '/');
